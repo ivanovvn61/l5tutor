@@ -30,8 +30,9 @@ class AuthController extends Controller
      */
 
     protected $loginView;
-    protected $username = 'login';
+    protected $username = 'name';
     protected $redirectTo = '/admin';
+    protected $redirectAfterLogout = '/admin';
 
     /**
      * Create a new authentication controller instance.
@@ -45,15 +46,6 @@ class AuthController extends Controller
     }
 
 
-    public function showLoginForm()
-    {
-        $view = property_exists($this, 'loginView') ? $this->loginView : '';
-        if (view()->exists($view)) {
-            return view($view)->with('title', 'Вход на сайт');
-        }
-        abort(404);
-    }
-
     /**
      * Get a validator for an incoming registration request.
      *
@@ -65,7 +57,7 @@ class AuthController extends Controller
         return Validator::make($data, [
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|min:6|confirmed',
+            'password' => 'required|min:3|confirmed',
         ]);
     }
 
@@ -82,5 +74,14 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    public function showLoginForm()
+    {
+        $view = property_exists($this, 'loginView') ? $this->loginView : '';
+        if (view()->exists($view)) {
+            return view($view)->with('title', 'Вход на сайт');
+        }
+        abort(404);
     }
 }

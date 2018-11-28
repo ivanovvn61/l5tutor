@@ -7,7 +7,7 @@
                 <h1 class="post-title"><a href="#">{{ $article->title }}</a></h1>
                 <!-- post featured -->
                 <div class="image-wrap">
-                    <img src="{{ asset(config('settings.theme')) }}/images/articles/{{ $article->img->max }}" alt="00212" title="00212"/>
+                    <img src="{{ asset(config('settings.theme')) }}/images/articles/{{ $article->img ? $article->img->max : '' }}" alt="00212" title="00212"/>
                 </div>
                 <p class="date">
                     <span class="month">{{ $article->created_at->format('M') }}</span>
@@ -40,19 +40,21 @@
             </p>
             <div class="clear"></div>
     </div>
+
     <!-- START COMMENTS -->
     <div id="comments">
         <h3 id="comments-title">
-            <span>{{ count($article->comments) }}</span> {{ Lang::choice('ru.comments',count($article->comments)) }}
+            <span>{{ count($article->comments) }}</span> {{ Lang::choice('ru.comments', count($article->comments)) }}
         </h3>
-        @if(count($article->comments) > 0)
+        @if (count($article->comments) > 0)
             @set($com, $article->comments->groupBy('parent_id'))
+            {{--{{ dd($com) }}--}}
             <ol class="commentlist group">
-                @foreach($com as $k => $comments)
-                    @if($k !== 0)
+                @foreach ($com as $k => $comments)
+                    @if ($k !== 0)
                         @break
                     @endif
-                    @include(config('settings.theme').'.comment',['items' => $comments])
+                    @include(config('settings.theme') . '.comment', ['items' => $comments])
                 @endforeach
             </ol>
     @endif
@@ -67,15 +69,23 @@
                 <small><a rel="nofollow" id="cancel-comment-reply-link" href="#respond" style="display:none;">Cancel reply</a></small>
             </h3>
             <form action="{{ route('comment.store') }}" method="post" id="commentform">
-                @if(!Auth::check())
-                    <p class="comment-form-author"><label for="author">Name</label> <input id="name" name="name" type="text" value="" size="30"
-                                                                                           aria-required="true"/></p>
-                    <p class="comment-form-email"><label for="email">Email</label> <input id="email" name="email" type="text" value="" size="30"
-                                                                                          aria-required="true"/></p>
+                @if (!Auth::check())
+                    <p class="comment-form-author"><label for="author">Name</label> <input id="name" name="name" type="text" value="" size="30" aria-required="true"/></p>
+                    <p class="comment-form-email"><label for="email">Email</label> <input id="email" name="email" type="text" value="" size="30" aria-required="true"/></p>
                     <p class="comment-form-url"><label for="url">Website</label><input id="url" name="site" type="text" value="" size="30"/></p>
                 @endif
 
                 <p class="comment-form-comment"><label for="comment">Your comment</label><textarea id="comment" name="text" cols="45" rows="8"></textarea></p>
+                <p>
+                    {!! captcha_img() !!}
+                    <a href="#" id="regen-captcha"><img class="regen-captcha" src="{{ asset(config('settings.theme')) }}/images/icons/set_icons/refresh32.png" alt=""></a>
+                    <input id="captcha" type="captcha" class="form-control captcha" name="captcha" value="{{ old('captcha') }}" required>
+                    @if ($errors->has('captcha'))
+                        <span class="help-block">
+                        <strong>{{ $errors->first('captcha') }}</strong>
+                        </span>
+                    @endif
+                </p>
                 <div class="clear"></div>
                 <p class="form-submit">
                     {{ csrf_field() }}

@@ -14,53 +14,49 @@ use Gate;
 
 class PermissionsController extends AdminController
 {
-    
     protected $per_rep;
     protected $rol_rep;
-    
+
     public function __construct(PermissionsRepository $per_rep, RolesRepository $rol_rep)
     {
         parent::__construct();
-        
-
         $this->per_rep = $per_rep;
         $this->rol_rep = $rol_rep;
-        
-        $this->template = config('settings.theme').'.admin.permissions';
+
+        $this->template = config('settings.theme') . '.admin.permissions';
     }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Throwable
      */
     public function index()
     {
         //
-        if(Gate::denies('EDIT_USERS')) {
-            return redirect()->route('forbidden');
+        if (Gate::denies('EDIT_USERS')) {
+            abort(403);
         }
 
         $this->title = "Менеджер прав пользователей";
-        
         $roles = $this->getRoles();
         $permissions = $this->getPermissions();
-        
-        $this->content = view(config('settings.theme').'.admin.permissions_content')->with(['roles'=>$roles,'priv' => $permissions])->render();      
-        
+
+        $this->content = view(config('settings.theme') . '.admin.permissions_content')->with(['roles' => $roles, 'priv' => $permissions])->render();
+
         return $this->renderOutput();
     }
-    
+
     public function getRoles()
     {
         $roles = $this->rol_rep->get();
-        
         return $roles;
     }
-    
+
     public function getPermissions()
     {
         $permissions = $this->per_rep->get();
-        
         return $permissions;
     }
 
@@ -77,25 +73,24 @@ class PermissionsController extends AdminController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
-		$result = $this->per_rep->changePermissions($request);
-		
-		if(is_array($result) && !empty($result['error'])) {
-			return back()->with($result);
-		}
-		
-		return back()->with($result);
+        $result = $this->per_rep->changePermissions($request);
+
+        if (is_array($result) && !empty($result['error'])) {
+            return back()->with($result);
+        }
+
+        return back()->with($result);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -106,7 +101,7 @@ class PermissionsController extends AdminController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -117,8 +112,8 @@ class PermissionsController extends AdminController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -129,7 +124,7 @@ class PermissionsController extends AdminController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

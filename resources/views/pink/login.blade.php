@@ -1,6 +1,5 @@
 @extends(config('settings.theme').'.layouts.site')
 
-
 @section('content')
     <div id="content-home" class="content group">
         <div class="hentry group">
@@ -9,14 +8,14 @@
                 <fieldset>
                     <ul>
                         <li class="text-field">
-                            <label for="login">
+                            <label for="name">
                                 <span class="label">Name</span>
                                 <br/> <span class="sublabel">This is the name</span><br/>
                             </label>
                             <div class="input-prepend"><span class="add-on"><i class="icon-user"></i></span>
-                                <input type="text" name="login" id="login" class="required" value=""/></div>
-                            @if ($errors->has('login'))
-                                <span class="help-block"><strong>{{ $errors->first('login') }}</strong></span>
+                                <input type="text" name="name" id="name" class="required" value="{{ old('name') }}"/></div>
+                            @if ($errors->has('name'))
+                                <span class="help-block"><strong>{{ $errors->first('name') }}</strong></span>
                             @endif
                         </li>
                         <li class="text-field">
@@ -26,8 +25,8 @@
                             </label>
                             <div class="input-prepend"><span class="add-on"><i class="icon-lock"></i></span>
                                 <input type="password" name="password" class="required" value=""/></div>
-                            @if ($errors->has('name'))
-                                <span class="help-block"><strong>{{ $errors->first('name') }}</strong></span>
+                            @if ($errors->has('password'))
+                                <span class="help-block"><strong>{{ $errors->first('password') }}</strong></span>
                             @endif
                         </li>
                         <li class="submit-button">

@@ -8,6 +8,7 @@
     <div id="content-index" class="content group">
         <div class="error-404-text group">
             <p>У вас нет прав на совершение данной операции.</p>
+            <p><a href="{{ url()->previous() }}">Назад</a></p>
         </div>
     </div>
 @endsection

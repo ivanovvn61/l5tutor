@@ -22,8 +22,6 @@ class MenusPolicy
     
      public function save(User $user)
     {
-        //
-        
         return $user->canDo('EDIT_MENU');
     }
 }

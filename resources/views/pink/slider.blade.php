@@ -1,23 +1,19 @@
-@if(count($sliders) > 0)
+@if (count($sliders) > 0)
     <div id="slider-cycle" class="slider cycle no-responsive slider_cycle group" style="height: 485px;">
         <ul class="slider">
             @set($i, 1)
-            @foreach($sliders as $slider)
+            @foreach ($sliders as $slider)
                 <li>
                     <div class="slide-holder" style="background: url('{{ asset(config('settings.theme')) }}/images/{{ $slider->img }}') no-repeat center center" style="height: 483px;">
                         <div class="slide-content-holder inner" style="height: 483px;">
-                            @if($i % 2 !== 0)
-                                <div class="slide-content-holder-content" style="position: absolute; top: 30px; right: 650px;">
-                            s@else
-                                <div class="slide-content-holder-content" style="position: absolute; top: 80px; left: 500px;">
-                            @endif
-                                    <div class="slide-title">
-                                        {!! $slider->title !!}
-                                    </div>
-                                    <div class="slide-content" style="color: #fff">
-                                        <p>{!! $slider->desc !!}</p>
-                                    </div>
+                            <div class="slide-content-holder-content" style="position: absolute; @if ($i % 2 !== 0) top: 30px; right: 650px; @else top: 80px; left: 500px; @endif ">
+                                <div class="slide-title">
+                                    {!! $slider->title !!}
                                 </div>
+                                <div class="slide-content" style="color: #fff">
+                                    <p>{!! $slider->desc !!}</p>
+                                </div>
+                            </div>
                         </div>
                 </li>
                 @set($i, $i+1)
@@ -27,7 +23,7 @@
         <div id="yit-widget-area" class="group">
             <div class="yit-widget-content inner group">
                 <div class="widget-first yit-widget widget col1_4 one-fourth col widget-icon-text group">
-                    <img class="icon-img" src="images/icons/cloud.jpg" alt=""/>
+                    <img class="icon-img" src="/pink/images/icons/cloud.jpg" alt=""/>
                     <h3>Great Design</h3>
                     <p>A widgetized area: add shorcodes, text, icons and more.</p>
                 </div>
@@ -35,7 +31,7 @@
                     <img class="icon-img" src="images/icons/blog1.png" alt=""/>
                     <div>
                         <h3><a class="text-color" href="#" title="">Blog news</a></h3>
-                        <p>Section shortcodes &amp; sticky posts! <a href="article.html"> | more ></a></p>
+                        <p>Section shortcodes &amp; sticky posts! <a href="{{ route('articles.index') }}"> | more ></a></p>
                     </div>
                 </div>
                 <div class="widget-last yit-widget widget col1_4 one-fourth col yit_text_quote">
@@ -100,4 +96,4 @@
     <div class="mobile-slider">
         <div class="slider fixed-image inner"><img src="{{ asset(config('settings.theme'))}}/images/slider-cycle/cycle-fixed.jpg" alt=""/></div>
     </div>
-@endif				
+@endif

@@ -9,7 +9,6 @@ use Corp\Http\Requests;
 use Corp\Repositories\MenusRepository;
 use Lavary\Menu\Menu;
 
-
 class SiteController extends Controller
 {
     protected $p_rep;
@@ -26,6 +25,10 @@ class SiteController extends Controller
     protected $contentLeftBar = false;
     protected $bar = 'no';
 
+    /**
+     * SiteController constructor.
+     * @param MenusRepository $m_rep
+     */
     public function __construct(MenusRepository $m_rep)
     {
         $this->m_rep = $m_rep;

@@ -2,7 +2,11 @@
 
 namespace Corp\Exceptions;
 
+use Corp\Http\Controllers\SiteController;
+use Corp\Menu;
+use Corp\Repositories\MenusRepository;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -50,10 +54,15 @@ class Handler extends ExceptionHandler
             $statusCode = $e->getStatusCode();
             switch ($statusCode) {
                 case '404' :
-                    $obj = new \Corp\Http\Controllers\SiteController(new \Corp\Repositories\MenusRepository(new \Corp\Menu));
+                    $obj = new SiteController(new MenusRepository(new Menu));
                     $navigation = view(config('settings.theme') . '.navigation')->with('menu', $obj->getMenu())->render();
-                    \Log::alert('Страница не найдена - ' . $request->url());
+                    Log::alert('Страница не найдена - ' . $request->url());
                     return response()->view(config('settings.theme') . '.404', ['bar' => 'no', 'title' => 'Страница не найдена', 'navigation' => $navigation]);
+                case '403' :
+                    $obj = new SiteController(new MenusRepository(new Menu));
+                    $navigation = view(config('settings.theme') . '.navigation')->with('menu', $obj->getMenu())->render();
+                    Log::alert('Доступ запрещен - ' . $request->url());
+                    return response()->view(config('settings.theme') . '.403', ['bar' => 'no', 'title' => 'Доступ запрещен', 'navigation' => $navigation]);
             }
         }
         return parent::render($request, $e);

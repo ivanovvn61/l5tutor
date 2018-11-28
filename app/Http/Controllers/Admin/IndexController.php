@@ -17,7 +17,7 @@ class IndexController extends AdminController
     public function index()
     {
         if (Gate::denies('VIEW_ADMIN')) {
-            return redirect()->route('forbidden');
+            return abort(403);
         }
         $this->title = 'Панель администратора';
         return $this->renderOutput();

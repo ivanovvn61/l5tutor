@@ -159,11 +159,9 @@ return [
         Corp\Providers\RouteServiceProvider::class,
         
         Collective\Html\HtmlServiceProvider::class,
-        
-        'Lavary\Menu\ServiceProvider',
-        
-        Intervention\Image\ImageServiceProvider::class
-
+        Lavary\Menu\ServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
+        Mews\Captcha\CaptchaServiceProvider::class
     ],
 
     /*
@@ -213,8 +211,9 @@ return [
         'Form' => Collective\Html\FormFacade::class,
       	'Html' => Collective\Html\HtmlFacade::class,
         
-        'Menu' => 'Lavary\Menu\Facade',
+        'Menu' => Lavary\Menu\Facade::class,
         'Image' => Intervention\Image\Facades\Image::class,
+        'Captcha' => Mews\Captcha\Facades\Captcha::class,
     ],
 
 ];

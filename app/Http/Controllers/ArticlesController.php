@@ -2,28 +2,25 @@
 
 namespace Corp\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Corp\Menu;
+use Corp\Repositories\MenusRepository;
 
 use Corp\Repositories\PortfoliosRepository;
 use Corp\Repositories\ArticlesRepository;
 use Corp\Repositories\CommentsRepository;
-
-use Corp\Http\Requests;
-
 use Corp\Category;
+use LaravelCaptcha\Facades\Captcha;
 
 class ArticlesController extends SiteController
 {
     public function __construct(PortfoliosRepository $p_rep, ArticlesRepository $a_rep, CommentsRepository $c_rep)
     {
-        parent::__construct(new \Corp\Repositories\MenusRepository(new \Corp\Menu));
+        parent::__construct(new MenusRepository(new Menu));
 
         $this->p_rep = $p_rep;
         $this->a_rep = $a_rep;
         $this->c_rep = $c_rep;
-
         $this->bar = 'right';
-
         $this->template = config('settings.theme') . '.articles';
     }
 
@@ -45,7 +42,6 @@ class ArticlesController extends SiteController
         $comments = $this->getComments(config('settings.recent_comments'));
         $portfolios = $this->getPortfolios(config('settings.recent_portfolios'));
         $this->contentRightBar = view(config('settings.theme') . '.articlesBar')->with(['comments' => $comments, 'portfolios' => $portfolios]);
-
         return $this->renderOutput();
     }
 
@@ -97,17 +93,17 @@ class ArticlesController extends SiteController
     public function show($alias = false)
     {
         $article = $this->a_rep->one($alias, ['comments' => true]);
+        if (!$article)
+            abort(404);
         if ($article) {
             $article->img = json_decode($article->img);
         }
-        //dd($article->comments->groupBy('parent_id'));
         if (isset($article->id)) {
             $this->title = $article->title;
             $this->keywords = $article->keywords;
             $this->meta_desc = $article->meta_desc;
         }
-
-        $content = view(config('settings.theme') . '.article_content')->with('article', $article)->render();
+        $content = view(config('settings.theme') . '.article_content')->with(['article' => $article])->render();
         $this->vars = array_add($this->vars, 'content', $content);
         $comments = $this->getComments(config('settings.recent_comments'));
         $portfolios = $this->getPortfolios(config('settings.recent_portfolios'));

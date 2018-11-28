@@ -20,3 +20,7 @@ It will always override rules in style.css.
 Good work... and good luck! :)
 
 ********************************************/
+img.regen-captcha {
+    width: 15px;
+    padding: 0px 5px 9px;
+}

@@ -26,6 +26,7 @@ class UsersController extends AdminController
         $this->rol_rep = $rol_rep;
         $this->template = config('settings.theme') . '.admin.users';
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -35,12 +36,13 @@ class UsersController extends AdminController
     public function index()
     {
         if (Gate::denies('EDIT_USERS')) {
-            return redirect()->route('forbidden');
+            abort(403);
         }
         $users = $this->us_rep->get();
         $this->content = view(config('settings.theme') . '.admin.users_content')->with(['users' => $users])->render();
         return $this->renderOutput();
     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -50,7 +52,7 @@ class UsersController extends AdminController
     public function create()
     {
         if (Gate::denies('EDIT_USERS')) {
-            return redirect()->route('forbidden');
+            abort(403);
         }
         $this->title = 'Новый пользователь';
         $roles = $this->getRoles()->reduce(function ($returnRoles, $role) {
@@ -65,6 +67,7 @@ class UsersController extends AdminController
     {
         return \Corp\Role::all();
     }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -77,8 +80,9 @@ class UsersController extends AdminController
         if (is_array($result) && !empty($result['error'])) {
             return back()->with($result);
         }
-        return redirect('/admin')->with($result);
+        return redirect('/admin/users')->with($result);
     }
+
     /**
      * Display the specified resource.
      *
@@ -89,6 +93,7 @@ class UsersController extends AdminController
     {
         //
     }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -99,7 +104,7 @@ class UsersController extends AdminController
     public function edit(User $user)
     {
         if (Gate::denies('EDIT_USERS')) {
-            return redirect()->route('forbidden');
+            abort(403);
         }
         $this->title = 'Редактирование пользователя - ' . $user->name;
         $roles = $this->getRoles()->reduce(function ($returnRoles, $role) {
@@ -110,6 +115,7 @@ class UsersController extends AdminController
         return $this->renderOutput();
 
     }
+
     /**
      * Update the specified resource in storage.
      *
@@ -123,8 +129,9 @@ class UsersController extends AdminController
         if (is_array($result) && !empty($result['error'])) {
             return back()->with($result);
         }
-        return redirect('/admin')->with($result);
+        return redirect('/admin/users')->with($result);
     }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -137,6 +144,6 @@ class UsersController extends AdminController
         if (is_array($result) && !empty($result['error'])) {
             return back()->with($result);
         }
-        return redirect('/admin')->with($result);
+        return redirect('/admin/users')->with($result);
     }
 }

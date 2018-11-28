@@ -13,7 +13,9 @@
     <link rel="stylesheet" type="text/css" media="all" href="{{ asset(config('settings.theme')) }}/css/cache-custom.css"/> <!-- MAIN THEME STYLESHEET -->
     <link rel="stylesheet" type="text/css" media="all" href="{{ asset(config('settings.theme')) }}/css/jquery-ui.css"/> <!-- MAIN THEME STYLESHEET -->
     <!-- FONTs -->
-    <link rel="stylesheet" id="google-fonts-css" href="http://fonts.googleapis.com/css?family=Oswald%7CDroid+Sans%7CPlayfair+Display%7COpen+Sans+Condensed%3A300%7CRokkitt%7CShadows+Into+Light%7CAbel%7CDamion%7CMontez&amp;ver=3.4.2" type="text/css" media="all"/>
+    <link rel="stylesheet" id="google-fonts-css"
+          href="http://fonts.googleapis.com/css?family=Oswald%7CDroid+Sans%7CPlayfair+Display%7COpen+Sans+Condensed%3A300%7CRokkitt%7CShadows+Into+Light%7CAbel%7CDamion%7CMontez&amp;ver=3.4.2"
+          type="text/css" media="all"/>
     <link rel='stylesheet' href='{{ asset(config('settings.theme')) }}/css/font-awesome.css' type='text/css' media='all'/>
     <!-- JAVASCRIPTs -->
     <script type="text/javascript" src="{{ asset(config('settings.theme')) }}/js/jquery.js"></script>
@@ -59,8 +61,8 @@
                 <div class="clearer"></div>
                 <hr/>
                 <!-- START MAIN NAVIGATION -->
-                @yield('navigation')
-                <!-- END MAIN NAVIGATION -->
+            @yield('navigation')
+            <!-- END MAIN NAVIGATION -->
                 <div id="menu-shadow"></div>
             </div>
         </div>
@@ -73,7 +75,7 @@
                 @endforeach
             </div>
         @endif
-        @if (session('status'))
+        @if (session()->has('status'))
             <div class="box success-box">
                 {{ session('status') }}
             </div>
@@ -86,8 +88,8 @@
         <div id="primary" class="sidebar-{{ isset($bar) ? $bar : 'no' }}">
             <div class="inner group">
                 <!-- START CONTENT -->
-                @yield('content')
-                <!-- END CONTENT -->
+            @yield('content')
+            <!-- END CONTENT -->
                 <!-- START SIDEBAR -->
                 <!-- END SIDEBAR -->
                 <!-- START EXTRA CONTENT -->

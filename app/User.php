@@ -29,7 +29,6 @@ class User extends Authenticatable
         return $this->hasMany('Corp\Article');
     }
 
-
     public function roles()
     {
         return $this->belongsToMany('Corp\Role', 'role_user');
@@ -40,11 +39,11 @@ class User extends Authenticatable
     public function canDo($permission, $require = FALSE)
     {
         if (is_array($permission)) {
-            foreach ($permission as $permName) {
-                $permName = $this->canDo($permName);
-                if ($permName && !$require) {
+            foreach ($permission as $item) {
+                $item = $this->canDo($item);
+                if ($item && !$require) {
                     return TRUE;
-                } else if (!$permName && $require) {
+                } else if (!$item && $require) {
                     return FALSE;
                 }
             }
@@ -52,7 +51,6 @@ class User extends Authenticatable
         } else {
             foreach ($this->roles as $role) {
                 foreach ($role->perms as $perm) {
-                    //foo*    foobar
                     if (str_is($permission, $perm->name)) {
                         return TRUE;
                     }
@@ -62,12 +60,11 @@ class User extends Authenticatable
     }
 
     // string  ['role1', 'role2']
-    public function hasRole($name, $require = false)
+    public function hasRole($nameRole, $require = false)
     {
-        if (is_array($name)) {
-            foreach ($name as $roleName) {
-                $hasRole = $this->hasRole($roleName);
-
+        if (is_array($nameRole)) {
+            foreach ($nameRole as $item) {
+                $hasRole = $this->hasRole($item);
                 if ($hasRole && !$require) {
                     return true;
                 } elseif (!$hasRole && $require) {
@@ -77,14 +74,11 @@ class User extends Authenticatable
             return $require;
         } else {
             foreach ($this->roles as $role) {
-                if ($role->name == $name) {
+                if ($role->name == $nameRole) {
                     return true;
                 }
             }
         }
-
         return false;
     }
-
-
 }

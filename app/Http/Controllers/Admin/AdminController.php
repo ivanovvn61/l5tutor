@@ -21,7 +21,7 @@ class AdminController extends Controller
 //        $this->user = Auth::user();
 //
 //        if (!$this->user) {
-//            return redirect()->route('forbidden');
+//            abort(403);
 //        }
     }
 
@@ -51,7 +51,7 @@ class AdminController extends Controller
     {
         $m = new Menu();
         return $m->make('adminMenu', function ($menu) {
-            $menu->add('Портфолио', array('route' => 'admin.articles.index'));
+            $menu->add('Статьи', array('route' => 'admin.articles.index'));
             $menu->add('Меню', array('route' => 'admin.menus.index'));
             $menu->add('Пользователи', array('route' => 'admin.users.index'));
             $menu->add('Привилегии', array('route' => 'admin.permissions.index'));

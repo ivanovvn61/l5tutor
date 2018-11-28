@@ -50,7 +50,6 @@ class IndexController extends SiteController
 
         $articles = $this->getArticles();
         $this->contentRightBar = view(config('settings.theme') . '.indexBar')->with('articles', $articles)->render();
-
         return $this->renderOutput();
     }
 

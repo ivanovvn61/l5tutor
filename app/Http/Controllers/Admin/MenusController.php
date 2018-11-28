@@ -1,6 +1,9 @@
 <?php
+
 namespace Corp\Http\Controllers\Admin;
 
+use Corp\Category;
+use Corp\Filter;
 use Illuminate\Http\Request;
 
 use Corp\Http\Requests;
@@ -13,7 +16,6 @@ use Corp\Repositories\PortfoliosRepository;
 use Illuminate\Support\Facades\Gate;
 use Lavary\Menu\Menu;
 
-
 class MenusController extends AdminController
 {
     protected $m_rep;
@@ -21,30 +23,31 @@ class MenusController extends AdminController
     public function __construct(MenusRepository $m_rep, ArticlesRepository $a_rep, PortfoliosRepository $p_rep)
     {
         parent::__construct();
-
         $this->m_rep = $m_rep;
         $this->a_rep = $a_rep;
         $this->p_rep = $p_rep;
-
         $this->template = config('settings.theme') . '.admin.menus';
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Throwable
      */
     public function index()
     {
         if (Gate::denies('VIEW_ADMIN_MENU')) {
-            return redirect()->route('forbidden');
+            abort(403);
         }
         $menu = $this->getMenus();
         $this->content = view(config('settings.theme') . '.admin.menus_content')->with('menus', $menu)->render();
         return $this->renderOutput();
     }
 
+    /**
+     * @return bool|\Lavary\Menu\Builder
+     */
     public function getMenus()
     {
         $menu = $this->m_rep->get();
@@ -64,10 +67,11 @@ class MenusController extends AdminController
             }
         });
     }
+
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Throwable
      */
     public function create()
@@ -82,7 +86,7 @@ class MenusController extends AdminController
             return $returnMenus;
         }, ['0' => 'Родительский пункт меню']);
 
-        $categories = \Corp\Category::select(['title', 'alias', 'parent_id', 'id'])->get();
+        $categories = Category::select(['title', 'alias', 'parent_id', 'id'])->get();
         $list = array();
         $list = array_add($list, '0', 'Не используется');
         $list = array_add($list, 'parent', 'Раздел блог');
@@ -99,7 +103,7 @@ class MenusController extends AdminController
             return $returnArticles;
         }, []);
 
-        $filters = \Corp\Filter::select('id', 'title', 'alias')->get()->reduce(function ($returnFilters, $filter) {
+        $filters = Filter::select('id', 'title', 'alias')->get()->reduce(function ($returnFilters, $filter) {
             $returnFilters[$filter->alias] = $filter->title;
             return $returnFilters;
         }, ['parent' => 'Раздел портфолио']);
@@ -153,16 +157,12 @@ class MenusController extends AdminController
             abort(403);
         }
         $this->title = 'Редактирование ссылки - ' . $menu->title;
-
         $type = false;
         $option = false;
-
         //path - http://corporate.loc/articles
         $route = app('router')->getRoutes()->match(app('request')->create($menu->path));
-
         $aliasRoute = $route->getName();
         $parameters = $route->parameters();
-
         if ($aliasRoute == 'articles.index' || $aliasRoute == 'articlesCat') {
             $type = 'blogLink';
             $option = isset($parameters['cat_alias']) ? $parameters['cat_alias'] : 'parent';
@@ -178,14 +178,13 @@ class MenusController extends AdminController
         } else {
             $type = 'customLink';
         }
-
         $tmp = $this->getMenus()->roots();
         $menus = $tmp->reduce(function ($returnMenus, $menu) {
             $returnMenus[$menu->id] = $menu->title;
             return $returnMenus;
         }, ['0' => 'Родительский пункт меню']);
 
-        $categories = \Corp\Category::select(['title', 'alias', 'parent_id', 'id'])->get();
+        $categories = Category::select(['title', 'alias', 'parent_id', 'id'])->get();
         $list = array();
         $list = array_add($list, '0', 'Не используется');
         $list = array_add($list, 'parent', 'Раздел блог');
@@ -202,7 +201,7 @@ class MenusController extends AdminController
             $returnArticles[$article->alias] = $article->title;
             return $returnArticles;
         }, []);
-        $filters = \Corp\Filter::select('id', 'title', 'alias')->get()->reduce(function ($returnFilters, $filter) {
+        $filters = Filter::select('id', 'title', 'alias')->get()->reduce(function ($returnFilters, $filter) {
             $returnFilters[$filter->alias] = $filter->title;
             return $returnFilters;
         }, ['parent' => 'Раздел портфолио']);
@@ -224,13 +223,10 @@ class MenusController extends AdminController
      */
     public function update(Request $request, \Corp\Menu $menu)
     {
-        //
         $result = $this->m_rep->updateMenu($request, $menu);
-
         if (is_array($result) && !empty($result['error'])) {
             return back()->with($result);
         }
-
         return redirect('/admin')->with($result);
     }
 

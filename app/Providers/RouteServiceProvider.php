@@ -31,11 +31,11 @@ class RouteServiceProvider extends ServiceProvider
         parent::boot($router);
         
         $router->bind('articles', function ($value) {
-        	return \Corp\Article::where('alias',$value)->first();
+        	return \Corp\Article::where('alias', $value)->first();
         });
         
         $router->bind('menus', function ($value) {
-        	return \Corp\Menu::where('id',$value)->first();
+        	return \Corp\Menu::where('id', $value)->first();
         });
         
         $router->bind('users', function ($value) {

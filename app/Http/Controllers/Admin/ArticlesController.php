@@ -1,4 +1,5 @@
 <?php
+
 namespace Corp\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
@@ -22,6 +23,7 @@ class ArticlesController extends AdminController
         $this->a_rep = $a_rep;
         $this->template = config('settings.theme') . '.admin.articles';
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -31,18 +33,21 @@ class ArticlesController extends AdminController
     public function index()
     {
         if (Gate::denies('VIEW_ADMIN_ARTICLES')) {
-            return redirect()->route('forbidden');
+            abort(403);
         }
-        $this->title = 'Менеджер статтей';
+        $this->title = 'Менеджер статей';
         $articles = $this->getArticles();
         $this->content = view(config('settings.theme') . '.admin.articles_content')->with('articles', $articles)->render();
         return $this->renderOutput();
     }
 
+    /**
+     * @return bool
+     */
     public function getArticles()
     {
         if (Gate::denies('VIEW_ADMIN_ARTICLES')) {
-            return redirect()->route('forbidden');
+            abort(403);
         }
         return $this->a_rep->get();
     }
@@ -54,8 +59,8 @@ class ArticlesController extends AdminController
      */
     public function create()
     {
-        if (Gate::denies('save', new \Corp\Article)) {
-            return redirect()->route('forbidden');
+        if (Gate::denies('save', new Article)) {
+            abort(403);
         }
         $this->title = "Добавить новый материал";
         $categories = Category::select(['title', 'alias', 'parent_id', 'id'])->get();
@@ -73,7 +78,7 @@ class ArticlesController extends AdminController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param ArticleRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(ArticleRequest $request)
@@ -82,13 +87,13 @@ class ArticlesController extends AdminController
         if (is_array($result) && !empty($result['error'])) {
             return back()->with($result);
         }
-        return redirect('/admin')->with($result);
+        return redirect('/admin/articles')->with($result);
     }
     /**
      * Display the specified resource.
      *
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function show($id)
     {
@@ -105,13 +110,13 @@ class ArticlesController extends AdminController
     {
         //
         //$article = Article::where('alias', $alias);
+//        phpinfo();
         if (Gate::denies('VIEW_ADMIN_ARTICLES')) {
-            return redirect()->route('forbidden');
+            abort(403);
         }
         $article->img = json_decode($article->img);
         $categories = Category::select(['title', 'alias', 'parent_id', 'id'])->get();
         $lists = array();
-
         foreach ($categories as $category) {
             if ($category->parent_id == 0) {
                 $lists[$category->title] = array();
@@ -120,30 +125,25 @@ class ArticlesController extends AdminController
             }
         }
         $this->title = 'Реадактирование материала - ' . $article->title;
-
         $this->content = view(config('settings.theme') . '.admin.articles_create_content')->with(['categories' => $lists, 'article' => $article])->render();
-
         return $this->renderOutput();
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
+     * @param ArticleRequest $request
+     * @param Article $article
      * @return \Illuminate\Http\Response
      */
-
     //   articles -> Article
     public function update(ArticleRequest $request, Article $article)
     {
         $result = $this->a_rep->updateArticle($request, $article);
-
         if (is_array($result) && !empty($result['error'])) {
             return back()->with($result);
         }
-
-        return redirect('/admin')->with($result);
+        return redirect('/admin/articles')->with($result);
     }
 
     /**
@@ -155,11 +155,9 @@ class ArticlesController extends AdminController
     public function destroy(Article $article)
     {
         $result = $this->a_rep->deleteArticle($article);
-
         if (is_array($result) && !empty($result['error'])) {
             return back()->with($result);
         }
-
-        return redirect('/admin')->with($result);
+        return redirect('/admin/articles')->with($result);
     }
 }

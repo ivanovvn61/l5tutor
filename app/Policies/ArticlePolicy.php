@@ -21,18 +21,19 @@ class ArticlePolicy
     {
         //
     }
-    
-    public function save(User $user) {
-		return $user->canDo('ADD_ARTICLES');
-	}
-	
-	public function edit(User $user) {
-		return $user->canDo('UPDATE_ARTICLES');
-	}
-	
-	public function destroy(User $user, Article $article) {
-		return ($user->canDo('DELETE_ARTICLES')  && $user->id == $article->user_id);
-	}
-	
-	
-  }
+
+    public function save(User $user)
+    {
+        return $user->canDo('ADD_ARTICLES');
+    }
+
+    public function edit(User $user)
+    {
+        return $user->canDo('UPDATE_ARTICLES');
+    }
+
+    public function destroy(User $user, Article $article)
+    {
+        return ($user->canDo('DELETE_ARTICLES') && $user->id == $article->user_id);
+    }
+}
