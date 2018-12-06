@@ -3,5 +3,6 @@
 /public/storage
 Homestead.yaml
 Homestead.json
-.env
+.env*
+.env_copy
 /.idea
